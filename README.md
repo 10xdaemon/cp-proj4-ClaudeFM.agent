@@ -174,7 +174,7 @@ You can add more tests in `tests/test_recommender.py`.
 
 ---
 
-## Experiments You Tried
+## Experiments
 
 *Adversarial profiles were designed to find the edges of the scoring logic (inputs that are technically valid but reveal unexpected or broken behavior).*
 
