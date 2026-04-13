@@ -1,111 +1,70 @@
 # 🎧 Model Card: Music Recommender Simulation
 
-## 1. Model Name  
+## 1. Model Name
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
-
----
-
-## 2. Intended Use  
-
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+**RubberSoul v1**
 
 ---
 
-## 3. How the Model Works  
+## 2. Intended Use
 
-Explain your scoring approach in simple language.  
-
-Prompts:  
-
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+A recommender suggests songs from a small catalog based on a user's preferences, things like preferred genre, mood, and energy level. It assumes the user can describe what they want upfront, and takes those inputs at face value without learning or adapting over time. It was built for exploring and understanding how scoring based recommendation systems work.
 
 ---
 
-## 4. Data  
+## 3. How the Model Works
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+You give it a profile: a genre, mood, target values for energy, tempo, etc... For each song in the catalog, it adds up points across six dimensions. Genre is worth the most, an exact match gives 2 points, no match gives nothing. Mood uses a short adjacency graph, so an "intense" user still gets partial credit for a "focused" song since those moods are "one" step apart so to speak. Energy, acousticness, tempo, and speechiness are each scored with a bell curve: a perfect match earns the full weight, and the score falls off smoothly the farther the song is from the target. Everything sums to a maximum of `8.0`. The top results are then filtered so no more than two songs from the same genre appear back to back, adding a little variety.
 
 ---
 
-## 5. Strengths  
+## 4. Data
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The catalog has 20 songs spanning 17 genres; from pop to synthwave, and 16 moods. No songs were added or removed from the original dataset. Some moods like "euphoric" and "peaceful" have only one song, so users who lean toward those moods have very little to choose from.
 
 ---
 
-## 6. Limitations and Bias 
+## 5. Strengths
 
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+The system works best for users with a clear, coherent profile that lines up with a well represented genre eg. a pop or lofi listener with typical energy preferences will consistently get results that feel right. The mood graph is a genuine strength: rather than requiring an exact mood match, it rewards nearby moods proportionally, so a "relaxed" user still surfaces "chill" and "happy" songs without listing them explicitly. The Gaussian scoring also handles imprecision gracefully. A song doesn't have to perfectly hit a target energy to score well, it just needs to be close.
 
 ---
 
-## 7. Evaluation  
+## 6. Limitations and Bias
 
-How you checked whether the recommender behaved as expected. 
+The genre bonus is the single largest scoring component, worth +2.0 out of a maximum of 8.0 (25%), and is awarded as a binary all or nothing match rather than a gradual signal. This creates an uneven playing field based on catalog representation. As stated before, a user who prefers pop or lofi receives that bonus frequently because those genres appear multiple times in the dataset, while a user who prefers an underrepresented genre; like bossa nova or soul, never receives it at all, pushing every recommendation down by 2.0 points from the start. <br>
 
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
+During adversarial testing this became concrete: a high energy profile still ranked *Spacewalk Thoughts* (ambient, energy proximity: +0.01) at #3 solely because its genre matched, meaning the genre bonus overrode nearly zero compatibility on every other dimension. In effect, the scoring does not just reflect how well a song fits a user, it also reflects how well the catalog was stocked with that user's genre to begin with.
 
 ---
 
-## 8. Future Work  
+## 7. Evaluation
 
-Ideas for how you would improve the model next.  
+Three baseline profiles were run first:
+1. high-energy pop
+1. chill lofi
+1. intense rock,
 
-Prompts:  
+to confirm if the results felt intuitive. Then seven adversarial profiles were designed to probe the edges. The results were surprising to say the least. <br>
+### The edges
 
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+1. a mood the system doesn't recognize ("sad")
+1. a sigma of zero
+1. a target tempo above the catalog's ceiling (220 BPM)
+1. contradictory high energy and high acousticness targets
+1. a genre absent from the catalog, and both an extremely tight and extremely wide sigma
+
+Each run was checked by reading the "per component" score breakdown for all five results, not just the rankings. The most surprising finding was that `sigma = 0` caused an outright crash, and that `sigma = 5.0` gave a song with energy `0.55` a near perfect energy score of `+1.99` when the target was `0.97`, the recommendation looked confident while quietly ignoring the mismatch.
 
 ---
 
-## 9. Personal Reflection  
+## 8. Future Work
 
-A few sentences about your experience.  
+The most urgent fix would be guarding against a sigma of zero, which currently crashes the program. Beyond that, the scoring would benefit from including `valence` and `danceability`, which are already in the dataset but ignored entirely. The mood graph could be expanded to cover moods users naturally reach for like "sad", that currently score zero without any warning.
 
-Prompts:  
+---
 
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+## 9. Personal Reflection
+
+The biggest takeaway was how much a single design decision (the +2.0 genre bonus) can quietly shape every result without being obvious from the outside. It also showed that a score can look very confident while failing on the dimension the user actually cares about most, which is exactly what makes real recommender systems hard to trust at times. It changed how I think about apps like Spotify and Youtube Music. Behind every "because you listened to X" label is probably a scoring system with similar quirks, just with millions of songs smoothing them out.
+
