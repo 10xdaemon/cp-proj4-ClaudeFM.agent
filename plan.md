@@ -6,12 +6,12 @@
 - [x] Create `.env` file with API keys (`ANTHROPIC_API_KEY`, `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `TAVILY_API_KEY`)
 
 ## Core Scorer — `src/scorer.py`
-- [ ] `gaussian_score_normalized()` — call `Recommender.score()` and divide by 8.0
-- [ ] `llm_relevance_batch()` — build batch prompt, call Claude API, parse JSON scores
-- [ ] `blend()` — weighted average of Gaussian and LLM scores
+- [x] `gaussian_score_normalized()` — call `Recommender.score()` and divide by 8.0
+- [x] `llm_relevance_batch()` — build batch prompt, call Claude API, parse JSON scores
+- [x] `blend()` — weighted average of Gaussian and LLM scores
 
 ## Agent Loop — `src/agent.py`
-- [ ] `run_agent()` — implement the full Claude tool-calling agentic loop (parse intent → tavily search → Spotify fetch → score → explain)
+- [x] `run_agent()` — implement the full Claude tool-calling agentic loop (parse intent → tavily search → Spotify fetch → score → explain)
 
 ## Streamlit UI — `app.py`
 - [ ] Import and wire `run_agent` once agent is implemented
