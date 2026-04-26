@@ -121,7 +121,7 @@ pytest tests/
 - All songs in a genre receiving identical scores → Fixed: spread audio features by search result position so the Gaussian scorer has meaningful variance.
 - Agent inventing seed artists for general queries → Fixed: tightened `parse_user_intent` tool schema to prohibit implied artists.
 
-**What was learned:** A score can look confident while quietly failing on the dimension the user actually cares about most. The genre bonus is the clearest example — high score, wrong reason. Adversarial profiles surfaced this faster than any unit test.
+**What was learned:** A score can look confident while quietly failing on the dimension the user actually cares about most. The genre bonus is the clearest where a song can have high score but wrong reason. Adversarial profiles surfaced this faster than any unit test.
 
 ---
 

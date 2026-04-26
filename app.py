@@ -7,7 +7,7 @@ from src.spotify_client import get_token, fetch_recommendations
 from src.scorer import gaussian_score_normalized
 from src.recommender import UserProfile
 
-st.set_page_config(page_title="Claude FM", page_icon="📻", layout="wide")
+st.set_page_config(page_title="OpenFM", page_icon="💽", layout="wide")
 
 # ── Session state initialization ───────────────────────────────────────────────
 if "query" not in st.session_state:
@@ -36,7 +36,7 @@ with st.sidebar:
     st.header("Configuration")
 
     gaussian_weight = st.slider(
-        "dev's choice  ←→ agentic search ",
+        " agentic search ←→ dev's choice ",
         min_value=0.0,
         max_value=1.0,
         value=0.5,
@@ -64,18 +64,17 @@ with st.sidebar:
 # ── Main ──────────────────────────────────────────────────────────────────────
 left, center, right = st.columns([1, 2, 1])
 with center:
-    st.markdown("<h1 style='text-align:center'>💽 Claude FM</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center'>💽 OpenFM</h1>", unsafe_allow_html=True)
     st.markdown(
         "<p style='text-align:center; color:gray; margin-top:-8px'>"
         "Type what you're about to do and get a personalized playlist.</p>",
         unsafe_allow_html=True,
     )
 
-    query = st.text_area(
+    query = st.text_input(
         "What are you up to?",
         key="query",
         placeholder="e.g. 'create a playlist for studying' or 'my friend loves Bad Bunny, we're at a party'",
-        height=80,
     )
 
     _, btn_col = st.columns([3, 1])
