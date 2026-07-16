@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-**Original**: Music Recommender Simulation: https://github.com/10xdaemon/cp-proj3-Music
+**Original**: Music Recommender Simulation: https://github.com/jkalpha/cp-proj3-Music
 
 **OpenFM** started as a scoring based music recommender that ranks a static 20 song catalog against a structured user taste profile. It uses genre matching, a mood adjacency graph, and Gaussian proximity across four audio features **[energy, tempo, acousticness, speechiness]** to produce a ranked playlist from a fixed dataset. The system was built to explore how small design decisions, like a single point bonus, can quietly shape every result.
 
